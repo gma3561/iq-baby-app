@@ -1,0 +1,1560 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>아이큐 - 신생아 맞춤형 제품 추천 서비스</title>
+
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@300;400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        :root {
+            --primary: #FF6B6B;
+            --primary-light: #FF8E8E;
+            --primary-dark: #E55555;
+            --primary-bg: #FFF5F5;
+            --secondary: #4ECDC4;
+            --accent: #FFD93D;
+            --gray-50: #F8F9FA;
+            --gray-100: #F1F3F5;
+            --gray-200: #E9ECEF;
+            --gray-300: #DEE2E6;
+            --gray-400: #CED4DA;
+            --gray-500: #ADB5BD;
+            --gray-600: #868E96;
+            --gray-700: #495057;
+            --gray-800: #343A40;
+            --gray-900: #212529;
+            --success: #51CF66;
+            --warning: #FFD43B;
+            --error: #FF6B6B;
+            --info: #339AF0;
+            --shadow-sm: 0 1px 2px rgba(0,0,0,0.05);
+            --shadow-md: 0 4px 6px rgba(0,0,0,0.1);
+            --shadow-lg: 0 10px 25px rgba(0,0,0,0.15);
+            --shadow-xl: 0 20px 40px rgba(0,0,0,0.2);
+            --radius-sm: 4px;
+            --radius-md: 8px;
+            --radius-lg: 12px;
+            --radius-xl: 16px;
+            --radius-2xl: 20px;
+            --radius-full: 9999px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans KR', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .mobile-container {
+            width: 100%;
+            max-width: 390px;
+            background: white;
+            border-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.3);
+            height: 844px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            aspect-ratio: 390 / 844;
+        }
+
+        .screen {
+            display: none;
+            flex-direction: column;
+            height: 100%;
+            animation: slideIn 0.3s ease-out;
+        }
+
+        .screen.active {
+            display: flex;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        /* Login Screen */
+        .login-screen {
+            background: linear-gradient(180deg, #FFF5F5 0%, #FFFFFF 100%);
+            padding: 60px 30px 40px;
+            justify-content: space-between;
+        }
+
+        .logo-section {
+            text-align: center;
+            animation: fadeIn 1s ease-out;
+        }
+
+        .app-logo {
+            font-size: 72px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .app-title {
+            font-size: 48px;
+            font-weight: 700;
+            color: var(--primary);
+            margin-bottom: 10px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .app-subtitle {
+            font-size: 16px;
+            color: var(--gray-600);
+            margin-bottom: 40px;
+        }
+
+        .features {
+            display: flex;
+            justify-content: space-around;
+            margin: 40px 0;
+            animation: fadeIn 1.5s ease-out;
+        }
+
+        .feature-item {
+            text-align: center;
+            flex: 1;
+        }
+
+        .feature-icon {
+            font-size: 36px;
+            margin-bottom: 8px;
+            display: inline-block;
+            animation: pulse 3s infinite;
+        }
+
+        .feature-text {
+            font-size: 12px;
+            color: var(--gray-700);
+        }
+
+        .kakao-login-btn {
+            background: #FEE500;
+            border: none;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 16px;
+            font-weight: 600;
+            color: #3C1E1E;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            animation: fadeIn 2s ease-out;
+        }
+
+        .kakao-login-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .kakao-login-btn:active {
+            transform: translateY(0);
+        }
+
+        .kakao-icon {
+            width: 24px;
+            height: 24px;
+            margin-right: 10px;
+        }
+
+        .terms {
+            text-align: center;
+            font-size: 11px;
+            color: var(--gray-500);
+            margin-top: 20px;
+        }
+
+        /* Registration Screen */
+        .registration-screen {
+            background: white;
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 60px 30px 30px;
+            color: white;
+            box-shadow: var(--shadow-md);
+        }
+
+        .header-title {
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .header-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .form-container {
+            flex: 1;
+            padding: 30px;
+            overflow-y: auto;
+        }
+
+        .form-group {
+            margin-bottom: 28px;
+        }
+
+        .form-label {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--gray-800);
+            margin-bottom: 12px;
+            display: block;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            transition: all 0.3s ease;
+            background: var(--gray-50);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+            box-shadow: 0 0 0 4px rgba(255, 107, 107, 0.1);
+        }
+
+        .date-picker {
+            display: flex;
+            gap: 10px;
+        }
+
+        .date-select {
+            flex: 1;
+            padding: 14px 12px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            background: var(--gray-50);
+            transition: all 0.3s ease;
+        }
+
+        .date-select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: white;
+        }
+
+        .gender-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .gender-btn {
+            flex: 1;
+            padding: 14px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-md);
+            background: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .gender-btn:hover {
+            background: var(--gray-50);
+        }
+
+        .gender-btn.active {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+            color: var(--primary);
+            font-weight: 600;
+        }
+
+        .product-types {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .product-type-card {
+            padding: 20px;
+            border: 2px solid var(--gray-200);
+            border-radius: var(--radius-lg);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: white;
+        }
+
+        .product-type-card:hover {
+            background: var(--gray-50);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-type-card.active {
+            border-color: var(--primary);
+            background: var(--primary-bg);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-type-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 6px;
+        }
+
+        .product-type-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+        }
+
+        .product-type-price {
+            font-size: 14px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-top: 8px;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 18px;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-md);
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        /* Home Screen */
+        .home-screen {
+            background: var(--gray-50);
+        }
+
+        .home-header {
+            background: white;
+            padding: 60px 20px 20px;
+            box-shadow: var(--shadow-sm);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .baby-info-display {
+            flex: 1;
+        }
+
+        .baby-name-display {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .baby-age-display {
+            font-size: 14px;
+            color: var(--gray-600);
+            margin-top: 4px;
+        }
+
+        .profile-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            border: none;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .profile-btn:hover {
+            transform: scale(1.1);
+            box-shadow: var(--shadow-md);
+        }
+
+        .home-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .weekly-recommendation {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            color: white;
+            padding: 24px;
+            border-radius: var(--radius-xl);
+            margin-bottom: 24px;
+            box-shadow: var(--shadow-md);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .weekly-recommendation::before {
+            content: '✨';
+            position: absolute;
+            top: -20px;
+            right: -20px;
+            font-size: 100px;
+            opacity: 0.1;
+        }
+
+        .weekly-title {
+            font-size: 20px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .weekly-subtitle {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .product-card {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 16px;
+            margin-bottom: 16px;
+            display: flex;
+            box-shadow: var(--shadow-sm);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+
+        .product-card:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .product-image {
+            width: 80px;
+            height: 80px;
+            border-radius: var(--radius-md);
+            background: linear-gradient(135deg, var(--gray-100), var(--gray-200));
+            margin-right: 16px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 32px;
+        }
+
+        .product-info {
+            flex: 1;
+        }
+
+        .product-category {
+            font-size: 12px;
+            color: var(--primary);
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .product-name {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 4px;
+        }
+
+        .product-desc {
+            font-size: 13px;
+            color: var(--gray-600);
+            margin-bottom: 8px;
+        }
+
+        .product-price {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--gray-900);
+        }
+
+        .tip-card {
+            background: linear-gradient(135deg, #E3F2FD, #F3E5F5);
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-top: 24px;
+        }
+
+        .tip-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .tip-content {
+            font-size: 14px;
+            color: var(--gray-700);
+            line-height: 1.6;
+        }
+
+        /* Bottom Navigation */
+        .bottom-nav {
+            background: white;
+            border-top: 1px solid var(--gray-200);
+            padding: 8px 0;
+            display: flex;
+            justify-content: space-around;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.05);
+        }
+
+        .nav-item {
+            padding: 8px 20px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .nav-item:hover {
+            transform: translateY(-2px);
+        }
+
+        .nav-icon {
+            font-size: 24px;
+            transition: all 0.3s ease;
+        }
+
+        .nav-label {
+            font-size: 11px;
+            color: var(--gray-600);
+            transition: all 0.3s ease;
+        }
+
+        .nav-item.active .nav-icon,
+        .nav-item.active .nav-label {
+            color: var(--primary);
+        }
+
+        /* Profile Screen */
+        .profile-screen {
+            background: var(--gray-50);
+        }
+
+        .profile-header {
+            background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+            padding: 60px 30px 30px;
+            color: white;
+        }
+
+        .profile-content {
+            flex: 1;
+            overflow-y: auto;
+            padding: 20px;
+        }
+
+        .info-section {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .info-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: var(--gray-900);
+            margin-bottom: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .edit-btn {
+            font-size: 14px;
+            color: var(--primary);
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        .info-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--gray-100);
+        }
+
+        .info-row:last-child {
+            border-bottom: none;
+        }
+
+        .info-label {
+            font-size: 14px;
+            color: var(--gray-600);
+        }
+
+        .info-value {
+            font-size: 14px;
+            color: var(--gray-900);
+            font-weight: 500;
+        }
+
+        .switch-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 16px 0;
+        }
+
+        .switch {
+            position: relative;
+            width: 50px;
+            height: 28px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: var(--gray-300);
+            transition: 0.3s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 20px;
+            width: 20px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: 0.3s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(22px);
+        }
+
+        .menu-item {
+            background: white;
+            border-radius: var(--radius-lg);
+            padding: 16px 20px;
+            margin-bottom: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: var(--shadow-sm);
+        }
+
+        .menu-item:hover {
+            transform: translateX(4px);
+            box-shadow: var(--shadow-md);
+        }
+
+        .menu-text {
+            font-size: 14px;
+            color: var(--gray-900);
+        }
+
+        .menu-arrow {
+            font-size: 18px;
+            color: var(--gray-400);
+        }
+
+        .logout-btn {
+            width: 100%;
+            padding: 16px;
+            background: var(--error);
+            color: white;
+            border: none;
+            border-radius: var(--radius-lg);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+            box-shadow: var(--shadow-md);
+        }
+
+        .logout-btn:hover {
+            background: var(--primary-dark);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+        }
+
+        /* Loading Animation */
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 0.8s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Footer */
+        .company-footer {
+            background: var(--gray-900);
+            color: var(--gray-400);
+            padding: 30px 20px;
+            font-size: 12px;
+            line-height: 1.8;
+            margin-top: 40px;
+        }
+
+        .company-name {
+            color: white;
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 16px;
+        }
+
+        .company-info {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .company-info-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 16px;
+        }
+
+        .company-info-item {
+            display: flex;
+            gap: 6px;
+        }
+
+        .company-info-label {
+            color: var(--gray-500);
+        }
+
+        .company-info-value {
+            color: var(--gray-300);
+        }
+
+        .company-info-value a {
+            color: var(--gray-300);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .company-info-value a:hover {
+            color: white;
+            text-decoration: underline;
+        }
+
+        .company-divider {
+            width: 100%;
+            height: 1px;
+            background: var(--gray-800);
+            margin: 16px 0;
+        }
+
+        .company-copyright {
+            color: var(--gray-500);
+            text-align: center;
+            margin-top: 12px;
+        }
+
+        /* Responsive - iPhone 비율 정확히 맞추기 */
+        @media (max-width: 480px) {
+            body {
+                padding: 0;
+                background: white;
+            }
+
+            .mobile-container {
+                max-width: 100%;
+                width: 100vw;
+                height: 100vh;
+                border-radius: 0;
+                aspect-ratio: auto;
+            }
+        }
+
+        @media (min-width: 481px) and (max-width: 768px) {
+            .mobile-container {
+                max-width: 390px;
+                height: min(844px, 90vh);
+            }
+        }
+
+        @media (min-width: 769px) {
+            .mobile-container {
+                max-width: 390px;
+                height: 844px;
+            }
+        }
+
+        /* iPhone 14 Pro */
+        @media (width: 393px) and (height: 852px) {
+            .mobile-container {
+                width: 393px;
+                height: 852px;
+            }
+        }
+
+        /* iPhone 14 */
+        @media (width: 390px) and (height: 844px) {
+            .mobile-container {
+                width: 390px;
+                height: 844px;
+            }
+        }
+
+        /* iPhone 13 mini */
+        @media (width: 375px) and (height: 812px) {
+            .mobile-container {
+                width: 375px;
+                height: 812px;
+            }
+        }
+
+        /* iPhone SE */
+        @media (width: 375px) and (height: 667px) {
+            .mobile-container {
+                width: 375px;
+                height: 667px;
+            }
+        }
+
+        /* Toast Message */
+        .toast {
+            position: fixed;
+            bottom: 100px;
+            left: 50%;
+            transform: translateX(-50%) translateY(100px);
+            background: var(--gray-900);
+            color: white;
+            padding: 12px 24px;
+            border-radius: var(--radius-full);
+            font-size: 14px;
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .toast.show {
+            transform: translateX(-50%) translateY(0);
+            opacity: 0.9;
+        }
+
+        /* Modal */
+        .modal-overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .modal-overlay.show {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal {
+            background: white;
+            border-radius: var(--radius-xl);
+            padding: 32px 24px 24px;
+            width: 90%;
+            max-width: 320px;
+            box-shadow: var(--shadow-xl);
+            animation: slideUp 0.3s ease;
+            text-align: center;
+        }
+
+        @keyframes slideUp {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+
+        .modal-icon {
+            font-size: 64px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+
+        .modal-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--gray-900);
+            margin-bottom: 12px;
+        }
+
+        .modal-message {
+            font-size: 14px;
+            color: var(--gray-600);
+            line-height: 1.6;
+            margin-bottom: 24px;
+        }
+
+        .modal-info {
+            background: var(--gray-50);
+            border-radius: var(--radius-md);
+            padding: 12px;
+            margin-bottom: 24px;
+        }
+
+        .modal-info-text {
+            font-size: 12px;
+            color: var(--gray-700);
+            line-height: 1.5;
+        }
+
+        .modal-buttons {
+            display: flex;
+            gap: 12px;
+        }
+
+        .modal-btn {
+            flex: 1;
+            padding: 14px;
+            border-radius: var(--radius-md);
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .modal-btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .modal-btn-primary:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+        }
+
+        .modal-btn-secondary {
+            background: var(--gray-200);
+            color: var(--gray-700);
+        }
+
+        .modal-btn-secondary:hover {
+            background: var(--gray-300);
+        }
+    </style>
+</head>
+<body>
+    <div class="mobile-container">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="screen active login-screen">
+            <div class="logo-section">
+                <div class="app-logo">👶</div>
+                <h1 class="app-title">아이큐</h1>
+                <p class="app-subtitle">신생아 맞춤형 제품 추천 서비스</p>
+            </div>
+
+            <div class="features">
+                <div class="feature-item">
+                    <div class="feature-icon">📅</div>
+                    <div class="feature-text">주차별 맞춤</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">💬</div>
+                    <div class="feature-text">카톡 알림</div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">🎁</div>
+                    <div class="feature-text">엄선된 제품</div>
+                </div>
+            </div>
+
+            <div>
+                <button class="kakao-login-btn" onclick="handleKakaoLogin()">
+                    <span class="kakao-icon">💬</span>
+                    카카오 로그인
+                </button>
+                <p class="terms">로그인 시 서비스 이용약관 및 개인정보처리방침에 동의합니다</p>
+
+                <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #E9ECEF;">
+                    <p style="font-size: 11px; color: #868E96; text-align: center; line-height: 1.6;">
+                        주식회사 엑시아파트너스<br>
+                        사업자번호: 654-87-03182<br>
+                        문의: 070-8804-7808
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Registration Screen -->
+        <div id="registrationScreen" class="screen registration-screen">
+            <div class="header">
+                <h1 class="header-title">아기 정보 등록</h1>
+                <p class="header-subtitle">맞춤형 제품 추천을 위한 정보를 입력해주세요</p>
+            </div>
+
+            <div class="form-container">
+                <div class="form-group">
+                    <label class="form-label">아기 이름</label>
+                    <input type="text" id="babyName" class="form-input" placeholder="아기 이름을 입력하세요">
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">생년월일</label>
+                    <div class="date-picker">
+                        <select id="birthYear" class="date-select">
+                            <option>2024년</option>
+                            <option>2023년</option>
+                        </select>
+                        <select id="birthMonth" class="date-select">
+                            <option>1월</option>
+                            <option>2월</option>
+                            <option>3월</option>
+                            <option>4월</option>
+                            <option>5월</option>
+                            <option>6월</option>
+                            <option>7월</option>
+                            <option>8월</option>
+                            <option>9월</option>
+                            <option>10월</option>
+                            <option>11월</option>
+                            <option>12월</option>
+                        </select>
+                        <select id="birthDay" class="date-select">
+                            <!-- Days will be generated by JavaScript -->
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">성별</label>
+                    <div class="gender-buttons">
+                        <button class="gender-btn" onclick="selectGender('male', this)">
+                            <span>👦</span>
+                            <span>남아</span>
+                        </button>
+                        <button class="gender-btn" onclick="selectGender('female', this)">
+                            <span>👧</span>
+                            <span>여아</span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">제품 타입</label>
+                    <div class="product-types">
+                        <div class="product-type-card active" onclick="selectProductType('standard', this)">
+                            <div class="product-type-title">일반 제품</div>
+                            <div class="product-type-desc">합리적인 가격대의 필수 육아 제품</div>
+                            <div class="product-type-price">월 평균 10-20만원</div>
+                        </div>
+                        <div class="product-type-card" onclick="selectProductType('premium', this)">
+                            <div class="product-type-title">프리미엄 제품</div>
+                            <div class="product-type-desc">고품질의 프리미엄 육아 제품</div>
+                            <div class="product-type-price">월 평균 20-40만원</div>
+                        </div>
+                    </div>
+                </div>
+
+                <button class="submit-btn" onclick="handleRegistration()">등록하기</button>
+            </div>
+        </div>
+
+        <!-- Home Screen -->
+        <div id="homeScreen" class="screen home-screen">
+            <div class="home-header">
+                <div class="baby-info-display">
+                    <div class="baby-name-display">아기님</div>
+                    <div class="baby-age-display">생후 4주 2일</div>
+                </div>
+                <button class="profile-btn" onclick="showProfile()">👤</button>
+            </div>
+
+            <div class="home-content">
+                <div class="weekly-recommendation">
+                    <div class="weekly-title">이번 주 추천 제품</div>
+                    <div class="weekly-subtitle">4주차 아기에게 필요한 제품들이에요</div>
+                </div>
+
+                <div class="section-title">
+                    <span>🎁</span>
+                    <span>추천 제품</span>
+                </div>
+
+                <div class="product-card" onclick="showProductDetail()">
+                    <div class="product-image">🍼</div>
+                    <div class="product-info">
+                        <div class="product-category">수유용품</div>
+                        <div class="product-name">신생아 젖병 세트</div>
+                        <div class="product-desc">BPA-free 안전한 젖병 3종 세트</div>
+                        <div class="product-price">35,000원</div>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showProductDetail()">
+                    <div class="product-image">👕</div>
+                    <div class="product-info">
+                        <div class="product-category">의류</div>
+                        <div class="product-name">순면 배냇저고리 5종</div>
+                        <div class="product-desc">100% 순면 소재의 부드러운 배냇저고리</div>
+                        <div class="product-price">45,000원</div>
+                    </div>
+                </div>
+
+                <div class="product-card" onclick="showProductDetail()">
+                    <div class="product-image">🧷</div>
+                    <div class="product-info">
+                        <div class="product-category">기저귀</div>
+                        <div class="product-name">프리미엄 기저귀 (신생아용)</div>
+                        <div class="product-desc">피부 자극 최소화 기저귀 대용량</div>
+                        <div class="product-price">55,000원</div>
+                    </div>
+                </div>
+
+                <div class="tip-card">
+                    <div class="tip-title">
+                        <span>💡</span>
+                        <span>4주차 육아 팁</span>
+                    </div>
+                    <div class="tip-content">
+                        이 시기 아기는 하루에 8-12회 정도 수유가 필요해요.
+                        한 번에 60-90ml 정도를 먹을 수 있으며,
+                        수유 후에는 꼭 트림을 시켜주세요.
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; padding: 20px; background: #F8F9FA; border-radius: 12px;">
+                    <p style="font-size: 11px; color: #868E96; text-align: center; line-height: 1.6;">
+                        <strong style="color: #495057;">주식회사 엑시아파트너스</strong><br>
+                        사업자번호: 654-87-03182 | 문의: 070-8804-7808<br>
+                        인천광역시 남동구 남동서로236번길 30
+                    </p>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <button class="nav-item active" onclick="showHome()">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">홈</span>
+                </button>
+                <button class="nav-item" onclick="showProducts()">
+                    <span class="nav-icon">🛍️</span>
+                    <span class="nav-label">제품</span>
+                </button>
+                <button class="nav-item" onclick="showTips()">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-label">육아팁</span>
+                </button>
+                <button class="nav-item" onclick="showProfile()">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">프로필</span>
+                </button>
+            </div>
+        </div>
+
+        <!-- Profile Screen -->
+        <div id="profileScreen" class="screen profile-screen">
+            <div class="profile-header">
+                <h1 class="header-title">프로필</h1>
+            </div>
+
+            <div class="profile-content">
+                <div class="info-section">
+                    <div class="info-section-title">
+                        사용자 정보
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">이름</span>
+                        <span class="info-value">김엄마</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">전화번호</span>
+                        <span class="info-value">010-1234-5678</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">카카오톡 ID</span>
+                        <span class="info-value">kakao_user123</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">
+                        아기 정보
+                        <button class="edit-btn">수정</button>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">이름</span>
+                        <span class="info-value">아기</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">생년월일</span>
+                        <span class="info-value">2024년 1월 15일</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">성별</span>
+                        <span class="info-value">남아</span>
+                    </div>
+                    <div class="info-row">
+                        <span class="info-label">제품 타입</span>
+                        <span class="info-value">일반</span>
+                    </div>
+                </div>
+
+                <div class="info-section">
+                    <div class="info-section-title">알림 설정</div>
+                    <div class="switch-row">
+                        <span class="info-label">제품 추천 알림</span>
+                        <label class="switch">
+                            <input type="checkbox" checked>
+                            <span class="slider"></span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="menu-item" onclick="showTerms()">
+                    <span class="menu-text">이용약관</span>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="showPrivacy()">
+                    <span class="menu-text">개인정보처리방침</span>
+                    <span class="menu-arrow">›</span>
+                </div>
+                <div class="menu-item" onclick="showFAQ()">
+                    <span class="menu-text">자주 묻는 질문</span>
+                    <span class="menu-arrow">›</span>
+                </div>
+
+                <button class="logout-btn" onclick="handleLogout()">로그아웃</button>
+
+                <div class="company-footer">
+                    <div class="company-name">주식회사 엑시아파트너스</div>
+                    <div class="company-info">
+                        <div class="company-info-row">
+                            <div class="company-info-item">
+                                <span class="company-info-label">사업자번호:</span>
+                                <span class="company-info-value">654-87-03182</span>
+                            </div>
+                        </div>
+                        <div class="company-info-row">
+                            <div class="company-info-item">
+                                <span class="company-info-label">문의:</span>
+                                <span class="company-info-value">
+                                    <a href="tel:070-8804-7808">070-8804-7808</a> /
+                                    <a href="mailto:kimyj@warmguys.com">kimyj@warmguys.com</a>
+                                </span>
+                            </div>
+                        </div>
+                        <div class="company-info-row">
+                            <div class="company-info-item">
+                                <span class="company-info-label">팩스:</span>
+                                <span class="company-info-value">02-863-9909</span>
+                            </div>
+                        </div>
+                        <div class="company-info-row">
+                            <div class="company-info-item">
+                                <span class="company-info-label">주소:</span>
+                                <span class="company-info-value">인천광역시 남동구 남동서로236번길 30, 2층 214-비31호</span>
+                            </div>
+                        </div>
+                        <div class="company-divider"></div>
+                        <div class="company-copyright">
+                            © 2024 주식회사 엑시아파트너스. All rights reserved.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <button class="nav-item" onclick="showHome()">
+                    <span class="nav-icon">🏠</span>
+                    <span class="nav-label">홈</span>
+                </button>
+                <button class="nav-item" onclick="showProducts()">
+                    <span class="nav-icon">🛍️</span>
+                    <span class="nav-label">제품</span>
+                </button>
+                <button class="nav-item" onclick="showTips()">
+                    <span class="nav-icon">💡</span>
+                    <span class="nav-label">육아팁</span>
+                </button>
+                <button class="nav-item active" onclick="showProfile()">
+                    <span class="nav-icon">👤</span>
+                    <span class="nav-label">프로필</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <div id="toast" class="toast"></div>
+
+    <!-- Development Modal -->
+    <div id="devModal" class="modal-overlay">
+        <div class="modal">
+            <div class="modal-icon">🚧</div>
+            <div class="modal-title">서비스 개발 중</div>
+            <div class="modal-message">
+                아이큐 서비스는 현재 열심히 개발 중입니다!<br>
+                곧 만나보실 수 있도록 준비하고 있어요.
+            </div>
+            <div class="modal-info">
+                <div class="modal-info-text">
+                    📅 오픈 예정: 2024년 3월<br>
+                    📧 문의: kimyj@warmguys.com
+                </div>
+            </div>
+            <div class="modal-buttons">
+                <button class="modal-btn modal-btn-primary" onclick="demoMode()">데모 체험하기</button>
+                <button class="modal-btn modal-btn-secondary" onclick="closeDevModal()">닫기</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // State management
+        let currentScreen = 'login';
+        let selectedGender = '';
+        let selectedProductType = 'standard';
+
+        // Initialize day options
+        function initializeDays() {
+            const daySelect = document.getElementById('birthDay');
+            for (let i = 1; i <= 31; i++) {
+                const option = document.createElement('option');
+                option.value = i;
+                option.textContent = i + '일';
+                daySelect.appendChild(option);
+            }
+        }
+
+        // Screen navigation
+        function showScreen(screenId) {
+            const screens = document.querySelectorAll('.screen');
+            screens.forEach(screen => screen.classList.remove('active'));
+            document.getElementById(screenId + 'Screen').classList.add('active');
+            currentScreen = screenId;
+        }
+
+        // Modal handlers
+        function showDevModal() {
+            document.getElementById('devModal').classList.add('show');
+        }
+
+        function closeDevModal() {
+            document.getElementById('devModal').classList.remove('show');
+        }
+
+        function demoMode() {
+            closeDevModal();
+            showToast('데모 모드로 진입합니다...');
+            setTimeout(() => {
+                showScreen('registration');
+                showToast('데모 모드 시작!');
+            }, 1500);
+        }
+
+        // Login handlers
+        function handleKakaoLogin() {
+            showDevModal();
+        }
+
+        // Registration handlers
+        function selectGender(gender, element) {
+            selectedGender = gender;
+            document.querySelectorAll('.gender-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function selectProductType(type, element) {
+            selectedProductType = type;
+            document.querySelectorAll('.product-type-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            element.classList.add('active');
+        }
+
+        function handleRegistration() {
+            const babyName = document.getElementById('babyName').value;
+
+            if (!babyName || !selectedGender) {
+                showToast('모든 정보를 입력해주세요');
+                return;
+            }
+
+            showToast('등록 중...');
+            setTimeout(() => {
+                document.querySelector('.baby-name-display').textContent = babyName + '님';
+                showScreen('home');
+                showToast('등록 완료!');
+            }, 1000);
+        }
+
+        // Navigation handlers
+        function showHome() {
+            showScreen('home');
+            updateNavigation('home');
+        }
+
+        function showProducts() {
+            showToast('제품 목록 준비 중...');
+        }
+
+        function showTips() {
+            showToast('육아 팁 준비 중...');
+        }
+
+        function showProfile() {
+            showScreen('profile');
+            updateNavigation('profile');
+        }
+
+        function updateNavigation(active) {
+            const navItems = document.querySelectorAll('.nav-item');
+            navItems.forEach(item => item.classList.remove('active'));
+
+            if (active === 'home') {
+                navItems[0].classList.add('active');
+            } else if (active === 'profile') {
+                navItems[3].classList.add('active');
+            }
+        }
+
+        // Product detail
+        function showProductDetail() {
+            showToast('제품 상세 페이지 준비 중...');
+        }
+
+        // Profile menu handlers
+        function showTerms() {
+            showToast('이용약관 페이지 준비 중...');
+        }
+
+        function showPrivacy() {
+            showToast('개인정보처리방침 페이지 준비 중...');
+        }
+
+        function showFAQ() {
+            showToast('FAQ 페이지 준비 중...');
+        }
+
+        function handleLogout() {
+            if (confirm('정말 로그아웃 하시겠습니까?')) {
+                showScreen('login');
+                showToast('로그아웃 되었습니다');
+            }
+        }
+
+        // Toast notification
+        function showToast(message) {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
+            toast.classList.add('show');
+
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 2000);
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeDays();
+        });
+    </script>
+</body>
+</html>
